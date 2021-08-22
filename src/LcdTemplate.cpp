@@ -12,7 +12,7 @@ void LcdTemplate::Deter() {
         sprintf(Data[0], "%s", "< KARA ELEKTRONIK  >");
         sprintf(Data[1], "%s", "  DAFLAN SOFTWARE   ");
         sprintf(Data[2], "%s", " ABKANT PRESS BRAKE ");
-        sprintf(Data[3], "%s", "<ver: 0.3 bu: 07/17>");
+        sprintf(Data[3], "%s", "<ver: 0.4 bu: 08/21>");
 
         break;
       }
@@ -110,19 +110,19 @@ LcdTemplate::LcdTemplate(short type) {
 
 short numberCol = 0;
 
-void LcdTemplate::Print(LiquidCrystal &lcd) {
+void LcdTemplate::Print(LiquidCrystal_I2C* lcd) {
   this->IsVisible = true;
 
-  lcd.clear();
+  lcd->clear();
 
   for (short i = 0; i < 4; i++) {
-    lcd.setCursor(0, i);
+    lcd->setCursor(0, i);
 
     for (short j = 0; j < 20; j++) {
       char cur = Data[i][j];
 
       if (cur > 0) {
-        lcd.write(Data[i][j]);
+        lcd->write(Data[i][j]);
         delay(3);
       }
 
@@ -171,11 +171,11 @@ void LcdTemplate::Print(LiquidCrystal &lcd) {
   }
 }
 
-void LcdTemplate::printNumber(char key, LiquidCrystal &lcd) {
+void LcdTemplate::printNumber(char key, LiquidCrystal_I2C* lcd) {
   switch (this->Type) {
     case 2:
       { // Manuel Ekran
-        lcd.write(key);
+        lcd->write(key);
         this->Out[numberCol] = key;
         numberCol++;
 
@@ -185,7 +185,7 @@ void LcdTemplate::printNumber(char key, LiquidCrystal &lcd) {
       }
     case 4:
       { // Settings Ekranı
-        lcd.write(key);
+        lcd->write(key);
         this->Out[numberCol] = key;
         numberCol++;
 
@@ -197,7 +197,7 @@ void LcdTemplate::printNumber(char key, LiquidCrystal &lcd) {
     case 8:
       {
         // PIN Ekranı
-        lcd.write('*');
+        lcd->write('*');
         this->Out[numberCol] = key;
         numberCol++;
         this->updateCursor(lcd);
@@ -207,15 +207,15 @@ void LcdTemplate::printNumber(char key, LiquidCrystal &lcd) {
   }
 }
 
-void LcdTemplate::updateCursor(LiquidCrystal &lcd) {
+void LcdTemplate::updateCursor(LiquidCrystal_I2C* lcd) {
   switch (this->Type) {
     case 2:
       { // Manuel Ekran
         if (numberCol > 3 || numberCol < 0)
           numberCol = 0;
 
-        lcd.setCursor(11 + (numberCol > 1 ? numberCol + 3 : numberCol), 1);
-        lcd.blink();
+        lcd->setCursor(11 + (numberCol > 1 ? numberCol + 3 : numberCol), 1);
+        lcd->blink();
 
         break;
       }
@@ -224,8 +224,8 @@ void LcdTemplate::updateCursor(LiquidCrystal &lcd) {
         if (numberCol > 3 || numberCol < 0)
           numberCol = 0;
 
-        lcd.setCursor(13 + (numberCol > 1 ? numberCol + 1 : numberCol), 0);
-        lcd.blink();
+        lcd->setCursor(13 + (numberCol > 1 ? numberCol + 1 : numberCol), 0);
+        lcd->blink();
 
         break;
       }
@@ -235,19 +235,19 @@ void LcdTemplate::updateCursor(LiquidCrystal &lcd) {
         if (numberCol > 3 || numberCol < 0)
           numberCol = 0;
 
-        lcd.setCursor(5 + numberCol, 1);
-        lcd.blink();
+        lcd->setCursor(5 + numberCol, 1);
+        lcd->blink();
 
         break;
       }
   }
 }
 
-void LcdTemplate::deleteNumber(LiquidCrystal &lcd) {
+void LcdTemplate::deleteNumber(LiquidCrystal_I2C* lcd) {
   switch (this->Type) {
     case 2:
       { // Manuel Ekran
-        lcd.write('0');
+        lcd->write('0');
         this->Out[numberCol] = '0';
 
         numberCol--;
@@ -257,7 +257,7 @@ void LcdTemplate::deleteNumber(LiquidCrystal &lcd) {
       }
     case 4:
       { // Settings Ekran
-        lcd.write('0');
+        lcd->write('0');
         this->Out[numberCol] = '0';
 
         numberCol--;
@@ -268,7 +268,7 @@ void LcdTemplate::deleteNumber(LiquidCrystal &lcd) {
 
     case 8:
       { // PIN Ekranı
-        lcd.write(' ');
+        lcd->write(' ');
         this->Out[numberCol] = ' ';
 
         numberCol--;
@@ -280,10 +280,10 @@ void LcdTemplate::deleteNumber(LiquidCrystal &lcd) {
   }
 }
 
-void LcdTemplate::HookKey(char key, LiquidCrystal &lcd) {
+void LcdTemplate::HookKey(char key, LiquidCrystal_I2C* lcd) {
   if (this->IsVisible) {
-    lcd.noBlink();
-    lcd.noCursor();
+    lcd->noBlink();
+    lcd->noCursor();
 
     switch (this->Type) {
       case 1:
@@ -299,16 +299,16 @@ void LcdTemplate::HookKey(char key, LiquidCrystal &lcd) {
             this->Deter();
 
             this->Print(lcd);
-            lcd.setCursor(11, 1);
-            lcd.blink();
+            lcd->setCursor(11, 1);
+            lcd->blink();
           }
           else if (key == 'C') {
             this->Type =  8; // Pin Ekranına git
             this->Deter();
 
             this->Print(lcd);
-            lcd.setCursor(5, 1);
-            lcd.blink();
+            lcd->setCursor(5, 1);
+            lcd->blink();
           }
 
           break;
@@ -441,8 +441,8 @@ void LcdTemplate::HookKey(char key, LiquidCrystal &lcd) {
                 this->Deter();
 
                 this->Print(lcd);
-                lcd.setCursor(13, 0);
-                lcd.blink();
+                lcd->setCursor(13, 0);
+                lcd->blink();
               }
               else {
                 this->Type = 8;
@@ -465,6 +465,3 @@ void LcdTemplate::HookKey(char key, LiquidCrystal &lcd) {
     }
   }
 }
-
-
-

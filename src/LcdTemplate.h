@@ -5,7 +5,7 @@
   #include "Arduino.h"
 #endif
 
-#include <LiquidCrystal.h>
+#include <LiquidCrystal_I2C.h>
 
 
 class LcdTemplate { 
@@ -26,12 +26,11 @@ class LcdTemplate {
     char Out[4];
     
     void Deter();
-    void HookKey(char key, LiquidCrystal &lcd);
-    void Print(LiquidCrystal &lcd);
-    void printNumber(char key, LiquidCrystal &lcd);
-    void deleteNumber(LiquidCrystal &lcd);
-    void updateCursor(LiquidCrystal &lcd);
+    void HookKey(char key, LiquidCrystal_I2C* lcd);
+    void Print(LiquidCrystal_I2C* lcd);
+    void printNumber(char key, LiquidCrystal_I2C* lcd);
+    void deleteNumber(LiquidCrystal_I2C* lcd);
+    void updateCursor(LiquidCrystal_I2C* lcd);
 };
 
 #endif
-
